@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        ".direnv": true
+    },
+    "nixEnvSelector.nixFile": "${workspaceFolder}/shell.nix",
+    "[nix]": {
+        "editor.defaultFormatter": "jnoortheen.nix-ide",
+        "editor.formatOnSave": true
+    }
+}

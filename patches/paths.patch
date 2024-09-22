@@ -1,0 +1,11 @@
+--- a/hetrixtools_agent.sh	2024-09-22 22:18:35.591987770 +0300
++++ b/hetrixtools_agent.sh"	2024-09-22 22:18:36.162973811 +0300
+@@ -20,8 +20,7 @@
+ 
+ # Set PATH/Locale
+ export LC_NUMERIC="C"
+-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+-ScriptPath=$(dirname "${BASH_SOURCE[0]}")
++ScriptPath=/var/lib/hetrixtools-agent
+ 
+ # Agent Version (do not change)

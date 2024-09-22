@@ -1,0 +1,15 @@
+--- a/hetrixtools_agent.sh	2024-09-22 20:23:53.574664622 +0300
++++ b/hetrixtools_agent.sh	2024-09-22 20:30:55.344286511 +0300
+@@ -26,14 +26,6 @@
+ 
+-# Load configuration file
+-if [ -f "$ScriptPath"/hetrixtools.cfg ]
+-then
+-	. "$ScriptPath"/hetrixtools.cfg
+-else
+-	exit 1
+-fi
+-
+ # Script start time
+ ScriptStartTime=$(date +[%Y-%m-%d\ %T)
+ 
