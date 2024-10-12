@@ -11,7 +11,20 @@ in
 
     sid = lib.mkOption {
       description = "Server ID";
-      type = str;
+      type = nullOr str;
+      default = null;
+    };
+
+    sidFile = lib.mkOption {
+      description = "File containing server ID";
+      type = nullOr str;
+      default = null;
+    };
+
+    sidCommand = lib.mkOption {
+      description = "Command to run to obtain server ID";
+      type = nullOr str;
+      default = null;
     };
 
     networkInterfaces = lib.mkOption {
@@ -68,6 +81,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.count (x: x != null) [ cfg.sid cfg.sidFile cfg.sidCommand ] == 1;
+        message = "Exactly one of services.hetrixtools-agent.{sid, sidFile, sidCommand} must be non-null.";
+      }
+    ];
+
     system.activationScripts.hetrixtools-agent.text = ''
       #!/bin/sh
       mkdir -p /var/lib/hetrixtools-agent
@@ -75,7 +95,6 @@ in
 
     systemd.services.hetrixtools-agent = {
       environment = {
-        SID = cfg.sid;
         NetworkInterfaces = lib.strings.concatStringsSep "," cfg.networkInterfaces;
         CheckServices = lib.strings.concatStringsSep "," cfg.checkServices;
         CheckSoftRAID = if cfg.checkSoftRAID then "1" else "0";
@@ -86,12 +105,28 @@ in
         SecuredConnection = if cfg.securedConnection then "1" else "0";
         CollectEveryXSeconds = builtins.toString cfg.collectEveryXSeconds;
         DEBUG = if cfg.debug then "1" else "0";
-      };
+      } // (if cfg.sid != null then { SID = cfg.sid; } else { });
 
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.hetrixtools-agent}/bin/hetrixtools_agent.sh";
-      };
+      serviceConfig =
+        let
+          script = pkgs.writeShellApplication {
+            name = "hetrixtools-agent";
+            text =
+              if cfg.sidFile != null then ''
+                SID="$(<'${cfg.sidFile}')"
+                export SID
+                exec "${pkgs.hetrixtools-agent}/bin/hetrixtools_agent.sh"
+              '' else if cfg.sidCommand != null then ''
+                SID="$(${cfg.sidCommand})"
+                export SID
+                exec "${pkgs.hetrixtools-agent}/bin/hetrixtools_agent.sh"
+              '' else "${pkgs.hetrixtools-agent}/bin/hetrixtools_agent.sh";
+          };
+        in
+        {
+          Type = "oneshot";
+          ExecStart = "${script}/bin/hetrixtools-agent";
+        };
     };
 
     systemd.timers.hetrixtools-agent = {
