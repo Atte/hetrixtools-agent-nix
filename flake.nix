@@ -24,13 +24,13 @@
     {
       packages.default = pkgs.stdenv.mkDerivation rec {
         pname = "hetrixtools-agent";
-        version = "2.2.7";
+        version = "2.2.9";
 
         src = pkgs.fetchFromGitHub {
           owner = "hetrixtools";
           repo = "agent";
-          rev = "571cd846014c0fda423ec1ae635b09627d783a97";
-          hash = "sha256-Aw/xBa8MfVjHGh1/8hhozoqrPdQl9Ah2Eqb+9spXo+Q=";
+          rev = "d3121d96695a85e29bcf60fb86624a1da0e80213";
+          hash = "sha256-hpdXypNld8NVfd7pEVatJllyy/gJZrCLa48rxamzl7Q=";
         };
 
         buildInputs = with pkgs; ([
